@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\FixedTransaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\Currency;
+use App\Models\Category;
+use App\Models\Key;
 class FixedTransactionController extends Controller
 {
     public function addFixedTransaction(Request $request)
@@ -17,34 +19,41 @@ class FixedTransactionController extends Controller
             $amount = $request->input('amount');
             $schedule = $request->input('schedule');
             $is_paid = $request->input('is_paid', false);
+    
             $currency_id = $request->input('currency_id');
+            $currency = Currency::find($currency_id);
+    
             $category_id = $request->input('category_id');
+            $category = Category::find($category_id);
+    
             $fixed_key_id = $request->input('fixed_key_id');
-
+            $fixed_key = Key::find($fixed_key_id);
+    
             $validator = Validator::make($request->all(), [
                 'schedule' => 'required|in:weekly,monthly,yearly',
-                'fixed_key_id' => 'required|exists:keys,id',
+                // 'fixed_key_id' => 'required|exists:fixed_key,id',
                 'amount' => 'required|numeric',
-                'is_paid' => 'boolean',
-                'currency_id' => 'required|exists:currencies,id',
+                'is_paid' =>  'boolean',
+                'currency_id'=> 'required|exists:currencies,id',
                 'category_id' => 'required|exists:categories,id',
             ]);
-            if ($validator->fails()) {
+            if($validator->fails()){
                 $respond['message'] = $validator->errors();
                 return $respond;
             }
-
-
+            
+    
             $fixed_transaction->amount = $amount;
             $fixed_transaction->start_date = $start_date;
             $fixed_transaction->schedule = $schedule;
             $fixed_transaction->is_paid = $is_paid;
+            $fixed_transaction->currency()->associate($currency);
+            $fixed_transaction->category()->associate($category);
+            $fixed_transaction->fixedkey()->associate($fixed_key);
             $fixed_transaction->next_payment_date = Carbon::parse($start_date);
-            $fixed_transaction->currency()->associate($currency_id);
-            $fixed_transaction->category()->associate($category_id);
-            $fixed_transaction->fixedKey()->associate($fixed_key_id);
+    
             $fixed_transaction->save();
-
+    
             if ($schedule === 'weekly') {
                 $interval = '1 week';
             } elseif ($schedule === 'monthly') {
@@ -52,20 +61,23 @@ class FixedTransactionController extends Controller
             } elseif ($schedule === 'yearly') {
                 $interval = '1 year';
             }
-
+    
             $next_date = Carbon::parse($start_date)->add($interval);
             $today = Carbon::today();
-
+    
             while ($next_date->lte($today)) {
                 $next_transaction = new FixedTransaction;
                 $next_transaction->amount = $amount;
                 $next_transaction->start_date = $next_date->toDateString();
                 $next_transaction->schedule = $schedule;
+                $next_transaction->currency()->associate($currency);
+                $next_transaction->category()->associate($category);
+                $next_transaction->fixedkey()->associate($fixed_key);
                 $next_transaction->is_paid = false;
                 $next_transaction->save();
                 $next_date->add($interval);
             }
-
+    
             return response()->json([
                 'message' => $fixed_transaction,
             ]); // successed response
@@ -75,6 +87,7 @@ class FixedTransactionController extends Controller
             ], 500); // 500 status code indicates internal server error
         }
     }
+
 
      public function GetTotal(Request $request)
     {
@@ -146,18 +159,24 @@ class FixedTransactionController extends Controller
 
         ]);
     }
-    public function getAllFixedTransactions(Request $request)
-    {
-        $fixed_transaction = FixedTransaction::all();
-        return response()->json([
-            'fixed_transactions' => $fixed_transaction
-        ]);
+    public function getAllFixedTransactions(){
+        try{
+            $fixed_transaction = FixedTransaction::with('currency','category','key')->get();
+            return response()->json([
+                'message' => $fixed_transaction
+            ]);
+        }
+        catch (\Exception $err) {
+            return response()->json([
+                'message' =>  $err->getMessage(),
+            ], 500); // 500 status code indicates internal server error
+        }
     }
 
     public function getFixedTransactionById(Request $request, $id) // returns a Currency by id
     {
         try {
-            $fixed_transaction = FixedTransaction::findOrFail($id);
+            $fixed_transaction = FixedTransaction::with('currency', 'category','key')->find($id);
 
             return response()->json([
                 'fixed_transaction' => $fixed_transaction,
