@@ -97,4 +97,4 @@ Route::patch('/goal/{id}',[GoalController::class,'editGoal']);
 Route::delete('/goal/{id}',[GoalController::class,'deleteGoal']);
 
 //alltransactions Routes
-Route::get('/goal',[TransactionController::class,'getAllTransactions']);
+Route::get('/alltransactions',[TransactionController::class,'getAllTransactions']);
