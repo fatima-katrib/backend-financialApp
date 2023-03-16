@@ -40,8 +40,8 @@ class FixedTransactionController extends Controller
             $fixed_transaction->schedule = $schedule;
             $fixed_transaction->is_paid = $is_paid;
             $fixed_transaction->next_payment_date = Carbon::parse($start_date);
-            $fixed_transaction->currency_id = $currency_id;
-            $fixed_transaction->category_id = $category_id;
+            $fixed_transaction->currency()->associate($currency_id);
+            $fixed_transaction->category()->associate($category_id);
             $fixed_transaction->fixedKey()->associate($fixed_key_id);
             $fixed_transaction->save();
 
