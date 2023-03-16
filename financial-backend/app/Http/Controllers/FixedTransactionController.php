@@ -75,6 +75,39 @@ class FixedTransactionController extends Controller
             ], 500); // 500 status code indicates internal server error
         }
     }
+
+     public function GetTotal(Request $request)
+    {
+        $type_code = $request->input('type_code');
+        $now = Carbon::now()->format('Y-m-d');
+        $start_month = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $end_month = Carbon::now()->endOfMonth()->format('Y-m-d');
+        $start_year = Carbon::now()->startOfYear()->format('Y-m-d');
+        $end_year = Carbon::now()->endOfYear()->format('Y-m-d');
+
+        $this_day = FixedTransaction::whereHas('category', function ($query) use ($type_code) {
+            $query->where('type_code', $type_code);
+        })->whereDate('start_date', $now)->sum('amount');
+
+        $this_month = FixedTransaction::whereHas('category', function ($query) use ($type_code) {
+            $query->where('type_code', $type_code);
+        })->whereDate('start_date', '<=', $end_month)->whereDate('start_date', ">=", $start_month)->sum('amount');
+
+        $this_year = FixedTransaction::whereHas('category', function ($query) use ($type_code) {
+            $query->where('type_code', $type_code);
+        })->whereDate('start_date', '<=', $end_year)->whereDate('start_date', ">=", $start_year)->sum('amount');
+
+        $current = FixedTransaction::whereHas('category', function ($query) use ($type_code) {
+            $query->where('type_code', $type_code);
+        })->sum('amount');
+
+        return response()->json([
+            'status' => 201,
+            'message' => "recurrings",
+            'data' => ["this_day" => $this_day, "this_month" => $this_month, "this_year" => $this_year, "current" => $current]
+        ]);
+    }
+
     public function editFixedTransaction(Request $request, $id)
     {
         try {
