@@ -147,6 +147,9 @@ class RecurringController extends Controller
     public function edit(Request $request, $id)
     {
         $recurring = Recurring::findOrFail($id);
+        $currency_id=$request->input('currency_id');
+        $category_id=$request->input('category_id');
+
         $inputs = $request
             ->except('_method')
         ;
@@ -162,8 +165,9 @@ class RecurringController extends Controller
         if ($validator->fails()) {
             $respond['message'] = $validator->errors();
             return $respond;
-        }
-
+        };
+        $currency_id ? $recurring->currency()->associate(Currency::findOrFail($currency_id)): null;
+        $category_id ? $recurring->category()->associate(Category::findOrFail($category_id)) : null;
         $recurring->update($inputs);
         $recurring->load('currency', 'category');
         return response()->json([

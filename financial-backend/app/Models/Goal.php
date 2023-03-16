@@ -13,4 +13,8 @@ class Goal extends Model
         'schedule',
 
     ];
+    public function Currency()
+    {
+        return $this->belongsTo(Currency::class);
+    }
 }

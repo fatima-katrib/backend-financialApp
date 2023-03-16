@@ -20,6 +20,7 @@ class FixedTransaction extends Model
 
 
         return $this->belongsTo(Currency::class);
+        
     }
 
     public function category()
@@ -31,4 +32,5 @@ class FixedTransaction extends Model
     {
         return $this->belongsTo(Key::class);
     }
+    
 }

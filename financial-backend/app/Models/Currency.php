@@ -21,4 +21,8 @@ class Currency extends Model
     public function fixedTransaction(){
         return $this->hasMany(FixedTransaction::class);
     }
+    public function Goal()
+    {
+        return $this->hasOne(Goal::class);
+    }
 }

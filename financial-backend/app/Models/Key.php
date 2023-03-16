@@ -11,6 +11,7 @@ class Key extends Model
     protected $fillable = [
         'title',
         'description',  
+        'isActive',
     ];
     public function fixedTransaction(){
         return $this->hasMany(FixedTransaction::class);
