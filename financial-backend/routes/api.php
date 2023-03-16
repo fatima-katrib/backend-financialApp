@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/fixedtransaction',[FixedTransactionController::class,'addFixedTransaction']);
 Route::patch('/fixedtransaction/{id}',[FixedTransactionController::class,'editFixedTransaction']);
 Route::delete('/fixedtransaction/{id}',[FixedTransactionController::class,'deleteFixedTransaction']);
+Route::get('/fixedtransaction/totals',[FixedTransactionController::class,'GetTotal']);
 Route::get('/fixedtransaction',[FixedTransactionController::class,'getAllFixedTransactions']);
 Route::get('/fixedtransaction/{id}',[FixedTransactionController::class,'getFixedTransactionById']);
 Route::get('/fixedtransaction', [FixedTransactionController::class,'getBy']);
