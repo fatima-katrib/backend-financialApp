@@ -11,7 +11,7 @@ use App\Http\Controllers\KeyController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TransactionController;
-
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,15 +39,15 @@ Route::get('/fixedtransaction', [FixedTransactionController::class,'getBy']);
 
 
 //UserController
-Route::Get('/user',[UserController::class,'getAllUser']);
-Route::Get('/user/{id}',[UserController::class,'getUser']);
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
-Route::middleware('auth:sanctum')->group(function () {
-Route::post('/logout', [UserController::class, 'logout']);
-});
-Route::delete('/user/{id}',[UserController::class,'destroyUser']);
-Route::Patch('/user/{id}',[UserController::class,'editUser']);
+// Route::Get('/user',[UserController::class,'getAllUser']);
+// Route::Get('/user/{id}',[UserController::class,'getUser']);
+// Route::post('/register', [UserController::class, 'register']);
+// Route::post('/login', [UserController::class, 'login']);
+// Route::middleware('auth:sanctum')->group(function () {
+// Route::post('/logout', [UserController::class, 'logout']);
+// });
+// Route::delete('/user/{id}',[UserController::class,'destroyUser']);
+// Route::Patch('/user/{id}',[UserController::class,'editUser']);
 
 //KeyController
 Route::Get('/key',[KeyController::class,'getAllFixed_Key']);
@@ -99,3 +99,17 @@ Route::delete('/goal/{id}',[GoalController::class,'deleteGoal']);
 
 //alltransactions Routes
 Route::get('/alltransactions',[TransactionController::class,'getAllTransactions']);
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/admin-profile', [AuthController::class, 'adminProfile']);  
+    Route::get('/admins', [AuthController::class, 'getAllAdmins']);
+
+});
+
