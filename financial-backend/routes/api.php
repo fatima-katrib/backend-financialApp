@@ -110,6 +110,7 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/admin-profile', [AuthController::class, 'adminProfile']);  
     Route::get('/admins', [AuthController::class, 'getAllAdmins']);
+    Route::delete('/admin/{id}', [AuthController::class, 'deleteAdmin']);
 
 });
 
