@@ -82,4 +82,32 @@ class AuthController extends Controller
 
         ]);
     }
+    public function editAdmin(Request $request, $id) {
+        $admin = Admin::find($id);
+        if (!$admin) {
+            return response()->json([
+                'message' => 'Admin not found'
+            ], 404);
+        }
+    
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|between:2,100',
+            'email' => 'string|email|max:100|unique:users,email,'.$admin->id,
+            'password' => 'string|min:6',
+        ]);
+        
+        if($validator->fails()){
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        
+        $admin->update(array_merge(
+            $validator->validated(),
+            ['password' => bcrypt($request->password ?? $admin->password)]
+        ));
+        
+        return response()->json([
+            'message' => 'Admin successfully updated',
+            'admin' => $admin
+        ], 200);
+    }
 }

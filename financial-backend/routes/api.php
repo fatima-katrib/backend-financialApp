@@ -111,6 +111,6 @@ Route::group([
     Route::get('/admin-profile', [AuthController::class, 'adminProfile']);  
     Route::get('/admins', [AuthController::class, 'getAllAdmins']);
     Route::delete('/admin/{id}', [AuthController::class, 'deleteAdmin']);
-
+    Route::patch('admin/{id}', [AuthController::class,'editAdmin']);
 });
 
