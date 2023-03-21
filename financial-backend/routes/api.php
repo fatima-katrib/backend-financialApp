@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/fixedtransaction',[FixedTransactionController::class,'addFixedTransaction']);
-Route::patch('/fixedtransaction/{id}',[FixedTransactionController::class,'editFixedTransaction']);
+Route::Patch('/fixedtransaction/{id}',[FixedTransactionController::class,'editFixedTransaction']);
 Route::delete('/fixedtransaction/{id}',[FixedTransactionController::class,'deleteFixedTransaction']);
 Route::get('/fixedtransaction/totals',[FixedTransactionController::class,'GetTotal']);
 Route::get('/fixedtransaction',[FixedTransactionController::class,'getAllFixedTransactions']);

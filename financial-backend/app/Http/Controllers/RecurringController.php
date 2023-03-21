@@ -15,7 +15,7 @@ class RecurringController extends Controller
 
     public function index(Request $request)
     {
-        $pagination = $request->input('pagination') ?? 2;
+        $pagination = $request->input('pagination') ?? 10;
         $recurring = Recurring::with('currency', 'category')->orderBy('start_date', 'desc')->paginate($pagination);
 
         //*********querry currency********* */

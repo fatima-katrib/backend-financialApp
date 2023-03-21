@@ -17,7 +17,9 @@ class GoalController extends Controller
         try {
             $goal = Goal::with('currency')->get();
             return response()->json([
-                'message' => $goal
+                'message' => 'Goal loaded successfully',
+                'goal' => $goal,
+
             ]);
 
         } catch (\Exception $err) {

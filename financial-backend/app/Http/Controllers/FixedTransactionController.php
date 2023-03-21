@@ -116,7 +116,7 @@ class FixedTransactionController extends Controller
 
         return response()->json([
             'status' => 201,
-            'message' => "recurrings",
+            'message' => "fixed",
             'data' => ["this_day" => $this_day, "this_month" => $this_month, "this_year" => $this_year, "current" => $current]
         ]);
     }
@@ -159,9 +159,10 @@ class FixedTransactionController extends Controller
 
         ]);
     }
-    public function getAllFixedTransactions(){
+    public function getAllFixedTransactions(Request $request){
         try{
-            $fixed_transaction = FixedTransaction::with('currency','category','key')->get();
+            $pagination = $request->input('pagination') ?? 10;
+            $fixed_transaction = FixedTransaction::with('currency', 'category')->orderBy('start_date', 'desc')->paginate($pagination);
             return response()->json([
                 'message' => $fixed_transaction
             ]);
@@ -176,7 +177,7 @@ class FixedTransactionController extends Controller
     public function getFixedTransactionById(Request $request, $id) // returns a Currency by id
     {
         try {
-            $fixed_transaction = FixedTransaction::with('currency', 'category','key')->find($id);
+            $fixed_transaction = FixedTransaction::with('currency', 'category','key')->findOrFail($id);
 
             return response()->json([
                 'fixed_transaction' => $fixed_transaction,
