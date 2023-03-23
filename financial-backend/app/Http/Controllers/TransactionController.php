@@ -119,16 +119,16 @@ class TransactionController extends Controller
 
         $fixed_expenses_this_day = FixedTransaction::whereHas('category', function ($query) {
             $query->where('type_code', 'expenses');
-        })->whereDate('start_date', $now)->sum('amount');
+        })->where('is_paid', '1')->whereDate('start_date', $now)->sum('amount');
         $fixed_expenses_this_month = FixedTransaction::whereHas('category', function ($query) {
             $query->where('type_code', 'expenses');
-        })->whereDate('start_date', '<=', $end_month)->whereDate('start_date', ">=", $start_month)->sum('amount');
+        })->where('is_paid', '1')->whereDate('start_date', '<=', $end_month)->whereDate('start_date', ">=", $start_month)->sum('amount');
         $fixed_expenses_this_year = FixedTransaction::whereHas('category', function ($query) {
             $query->where('type_code', 'expenses');
-        })->whereDate('start_date', '<=', $end_year)->whereDate('start_date', ">=", $start_year)->sum('amount');
+        })->where('is_paid', '1')->whereDate('start_date', '<=', $end_year)->whereDate('start_date', ">=", $start_year)->sum('amount');
         $fixed_expenses_current = FixedTransaction::whereHas('category', function ($query) {
             $query->where('type_code', 'expenses');
-        })->sum('amount');
+        })->where('is_paid', '1')->sum('amount');
 
         $expenses_this_day = $recurring_expenses_this_day + $fixed_expenses_this_day;
         $expenses_this_month = $recurring_expenses_this_month + $fixed_expenses_this_month;
